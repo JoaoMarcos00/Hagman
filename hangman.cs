@@ -1,57 +1,53 @@
 using System;
 
-namespace JogoDaForca
+namespace HangmanGame
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string palavra = "banana"; // palavra a ser adivinhada
-            string palavraAdivinhada = "";
-            int maxTentativas = 6;
-            int tentativas = 0;
-            char letra;
+            string[] words = { "apple", "banana", "cherry", "orange", "grape" };
+            Random random = new Random();
+            string wordToGuess = words[random.Next(words.Length)];
+            char[] letters = wordToGuess.ToCharArray();
+            char[] display = new char[letters.Length];
+            int attemptsLeft = 6;
 
-            // Inicializar a palavra a ser adivinhada com traços
-            for (int i = 0; i < palavra.Length; i++)
+            for (int i = 0; i < display.Length; i++)
             {
-                palavraAdivinhada += "_";
+                display[i] = '_';
             }
 
-            while (palavraAdivinhada != palavra && tentativas < maxTentativas)
+            while (attemptsLeft > 0)
             {
-                Console.WriteLine("A palavra é: " + palavraAdivinhada);
-                Console.WriteLine("Digite uma letra: ");
-                letra = char.Parse(Console.ReadLine());
+                Console.WriteLine("Attempts left: " + attemptsLeft);
+                Console.WriteLine(display);
+                Console.Write("Guess a letter: ");
+                char guess = Console.ReadLine()[0];
 
-                bool acertou = false;
-
-                for (int i = 0; i < palavra.Length; i++)
+                bool found = false;
+                for (int i = 0; i < letters.Length; i++)
                 {
-                    if (palavra[i] == letra)
+                    if (guess == letters[i])
                     {
-                        palavraAdivinhada = palavraAdivinhada.Remove(i, 1).Insert(i, letra.ToString());
-                        acertou = true;
+                        display[i] = guess;
+                        found = true;
                     }
                 }
 
-                if (!acertou)
+                if (!found)
                 {
-                    tentativas++;
-                    Console.WriteLine($"Você errou! Restam {maxTentativas - tentativas} tentativas.");
+                    attemptsLeft--;
+                }
+
+                if (new string(display) == wordToGuess)
+                {
+                    Console.WriteLine("You win! The word was: " + wordToGuess);
+                    return;
                 }
             }
 
-            if (palavraAdivinhada == palavra)
-            {
-                Console.WriteLine("Parabéns! Você acertou a palavra!");
-            }
-            else
-            {
-                Console.WriteLine($"Você perdeu! A palavra era {palavra}.");
-            }
-
-            Console.ReadKey();
+            Console.WriteLine("You lose! The word was: " + wordToGuess);
         }
     }
 }
